@@ -1,28 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var config = require('../scripts/config.js');
-var orion = require('../scripts/orion-rest.js');
-/*
-var Orion = require('fiware-orion-client');
-var OrionClient = new Orion.Client({
-	url: config.ORION_SERVER,
-	userAgent: 'Dataflow-Agent',
-	timeout: 5000
-});
 
-var entity = {
-	type: 'Car',
-	pattern: '*',
-	attributes: [{
-		name: 'buildYear',
-		type: typeof ''
-	}]
-};
-var params = {
-	callback: 'http://localhost:3000/contextbroker/callback'
-};
-*/
-
+var orion = require('fiware-orion-mintaka');
+orion.configure(config.ORION);
 
 var json = {
 	"attributes" : [
@@ -51,10 +32,88 @@ router.get('/', function(req, res, next) {
 	);
 });
 
+router.get('/register/:type/entity/:entity',function(req, res, next){
+	var e = req.params.entity;
+	var t = req.params.type;
+	//console.log('register', e);
+	orion.registerEntityWithType(e, t, json).then(
+		function(success){
+			res.send(success);
+		},
+		function(error){
+			res.send(error);
+		}
+	);
+});
+
+router.get('/register/:entity/attribute/:attribute', function(req, res, next){
+	var e = req.params.entity;
+	var a = req.params.attribute;
+	orion.registerAttribute(e, a, 34).then(
+		function(success){
+			res.send(success);
+		},
+		function(error){
+			res.send(error);
+		}
+	);
+});
+
+router.get('/:entity/attributes',function(req, res, next){
+	var e = req.params.entity;
+	orion.queryAttributes(e).then(
+		function(success){
+			res.send(success);
+		},
+		function(error){
+			res.send(error);
+		}
+	);
+});
+
+router.get('/:entity/attributes/:attribute',function(req, res, next){
+	var e = req.params.entity;
+	var a = req.params.attribute;
+	orion.querySingleAttribute(e, a).then(
+		function(success){
+			res.send(success);
+		},
+		function(error){
+			res.send(error);
+		}
+	);
+});
+
+
 router.get('/register/:entity', function(req, res, next){
 	var e = req.params.entity;
 	//console.log('register', e);
-	orion.registerContext(e, json).then(
+	orion.registerEntity(e, json).then(
+		function(success){
+			res.send(success);
+		},
+		function(error){
+			res.send(error);
+		}
+	);
+});
+
+router.get('/type/:type', function(req, res, next){
+	var t = req.params.type;
+	orion.queryEntitiesByType(t).then(
+		function(success){
+			res.send(success);
+		},
+		function(error){
+			res.send(error);
+		}
+	);
+});
+
+router.get('/type/:type/attribute/:attribute',function(req, res, next){
+	var t = req.params.type;
+	var a = req.params.attribute;
+	orion.querySingleAttributeByEntityType(t, a).then(
 		function(success){
 			res.send(success);
 		},
