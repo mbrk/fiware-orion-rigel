@@ -1,26 +1,17 @@
+/**
+ * routes for controlling the context broker - mostly for feedback/control in development
+ */
+
 var express = require('express');
 var router = express.Router();
-var config = require('../scripts/config.js');
+var config = require('../config/config.js');
 
 var orion = require('fiware-orion-mintaka');
 orion.configure(config.ORION);
 
-var json = {
-	"attributes" : [
-		{
-			"name" : "temperature",
-			"type" : "float",
-			"value" : "23"
-		},
-		{
-			"name" : "pressure",
-			"type" : "integer",
-			"value" : "720"
-		}
-	]
-};
+var json = {"attributes":[{"name":"free","type":"integer","value":0},{"name":"occupied","type":"integer","value":0},{"name":"percentage_free","type":"float","value":0},{"name":"percentage_occupied","type":"float","value":0},{"name":"highest","type":"string","value":"-"},{"name":"lowest","type":"string","value":"-"},{"name":"change","type":"string","value":"-"}]};
 
-/* GET users listing. */
+/* GET listing. */
 router.get('/', function(req, res, next) {
 	orion.requestEntities().then(
 		function(success){
