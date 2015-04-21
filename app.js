@@ -4,12 +4,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var config = require('./config/config.js');
 
 
 var routes = require('./routes/index');
 var adapter = require('./routes/adapter');
-var cb = require('./routes/contextbroker')
+var cb = require('./routes/contextbroker');
 
 var app = express();
 
@@ -25,7 +25,26 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+/** PH ADAPTER DIRTY TRY N ERROR**/
 
+
+// create orion interface
+var orionControl = require('./scripts/orion-control');
+orionControl.init(config.ORION);
+// create parking capacity adapter
+var pa = require('./adapter/ph-spreadsheet-importer/index.js');
+pa.init({key: config.GDoc.key});
+// init needed entities for adapter
+orionControl.initEntities(pa.getEntityDefinition());
+// create callback for adapter results
+function paResultCallback(r){
+	orionControl.updateEntities(r);
+}
+// start adapter work - pass in a function as callback
+pa.run(paResultCallback, 10000);
+
+
+/** PH ADAPTER END **/
 
 app.use('/', routes);
 app.use('/adapter', adapter);
