@@ -32,7 +32,8 @@ orionControl.init(config.ORION);
 var readPH = false;
 var readCal = false;
 var readNews = false;
-var readWeather = true;
+var readWeather = false;
+var readCard = true;
 
 /** PH ADAPTER DIRTY TRY N ERROR**/
 
@@ -62,8 +63,8 @@ if(readNews){
 		// init needed entities for adapter
 		orionControl.initEntities(na.getEntityDefinition());
 		// start adapter work - pass in a function as callback to place updates
-		na.run(orionControl.updateEntities, 8000);
-	}, 1000);
+		na.run(orionControl.updateEntities, 9000);
+	}, 2000);
 }
 
 /** NEWS ADAPTER END **/
@@ -79,8 +80,8 @@ if(readWeather){
 		// init needed entities for adapter
 		orionControl.initEntities(wa.getEntityDefinition());
 		// start adapter work - pass in a function as callback to place updates
-		wa.run(orionControl.updateEntities, 8000);
-	}, 1000);
+		wa.run(orionControl.updateEntities, 13000);
+	}, 4000);
 }
 
 /** WEATHER ADAPTER END **/
@@ -96,13 +97,28 @@ if(readCal){
 		// init needed entities for adapter
 		orionControl.initEntities(ga.getEntityDefinition());
 		// start adapter work - pass in a function as callback to place updates
-		ga.run(orionControl.updateEntities, 10000);
-	}, 2000);
+		ga.run(orionControl.updateEntities, 11000);
+	}, 5000);
 }
 
 /** GCal ADAPTER END **/
 
+/** CARD ADAPTER DIRTY TRY N ERROR**/
 
+if(readCard){
+	// create parking capacity adapter
+	var ca = require('./adapter/card-spreadsheet-importer/index.js');
+	ca.init({key: config.GDocCard.key});
+
+	setTimeout(function(){
+		// init needed entities for adapter
+		orionControl.initEntities(ca.getEntityDefinition());
+		// start adapter work - pass in a function as callback to place updates
+		ca.run(orionControl.updateEntities, 13000);
+	}, 500);
+}
+
+/** CARD ADAPTER END **/
 
 app.use('/', routes);
 app.use('/adapter', adapter);
