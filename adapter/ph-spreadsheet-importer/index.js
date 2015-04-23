@@ -1,9 +1,10 @@
-var ph = require('./ph-spreadsheet-import.js');
+var ph = require('../generic/spreadsheet-import.js');
 const ENTITY_NAMESPACE = 'DATAFLOW';
 const ADAPTER_NAMESPACE = 'HHCARPARK';
 const ENTITY_SEPARATOR = ':';
 const ATTRIBUTE_SEPARATOR = '_';
 const ENTITY_TYPE = 'DATAFLOW:INFRASTRUCTURE:PUBLIC';
+var debug = true;
 
 // entities needed by this adapter
 var entityDefinition = {
@@ -64,6 +65,7 @@ module.exports = {
 	},
 
 	run: function(callback, interval){
+		if(debug) console.log('run: ', ADAPTER_NAMESPACE);
 		getRows(callback);
 		if(interval !== false){
 			this.interval = setInterval(function(){getRows(callback)}, interval);
@@ -122,7 +124,7 @@ function getRows(callback){
 					}
 				]
 			};
-			console.log('update: ', new Date().getMilliseconds());
+			//console.log('update: ', new Date().getMilliseconds());
 
 			callback(update);
 		},

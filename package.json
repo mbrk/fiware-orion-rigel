@@ -12,6 +12,7 @@
     "express": "~4.12.2",
     "fiware-orion-mintaka": "^0.2.0",
     "google-spreadsheet": "^0.2.8",
+    "ical": "^0.4.0",
     "jade": "~1.9.2",
     "morgan": "~1.5.1",
     "promise": "^7.0.0",
